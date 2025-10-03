@@ -1,489 +1,231 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Marcador MLB - Corregido</title>
+  <meta charset="UTF-8">
+  <title>Marcador de Béisbol</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Fuente deportiva -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
   <style>
-    :root{
-      --bg:#071428;
-      --panel:#0f3252;
-      --muted:#98a3b3;
-      --accent:#c41230;
-      --white:#ffffff;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family: Inter, Roboto, Arial, sans-serif;
-      background: linear-gradient(180deg,var(--bg),#021426);
-      color:var(--white);
-      padding:18px;
-    }
-    .wrap{ max-width:1100px; margin:0 auto; }
-
-    header{
-      text-align:center;
-      margin-bottom:12px;
-    }
-    header h1{ margin:6px 0; font-size:20px; }
-    .top-controls{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px; }
-
-    button{
-      border:0; padding:8px 12px; border-radius:8px; font-weight:700; cursor:pointer;
-    }
-    .prev{ background:#f0ad4e; color:#000 }
-    .next{ background:#28a745; color:#fff }
-    .reset{ background:var(--accent); color:#fff }
-    .swap{ background:#2b6cb0; color:#fff }
-
-    .table-wrap{
-      overflow-x:auto;
-      padding:6px;
-      border-radius:12px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));
-      border:1px solid rgba(255,255,255,0.03);
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: #001133;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    table{ border-collapse:collapse; width:100%; min-width:860px; }
-    thead th{
-      background:rgba(255,255,255,0.04);
-      color:var(--muted);
-      font-weight:700;
-      padding:10px 8px;
-      text-align:center;
-      position:relative;
+    .scoreboard {
+      background: #0033cc;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      padding: 20px;
+      max-width: 800px;
+      width: 95%;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 15px;
     }
-    thead th:first-child{ text-align:left; padding-left:16px; }
 
-    tbody tr{ border-top:1px solid rgba(255,255,255,0.03); }
-    tbody td{ padding:8px 8px; text-align:center; vertical-align:middle; color:var(--white); }
-
-    .team-cell{ display:flex; align-items:center; gap:10px; text-align:left; padding-left:12px; }
-    .logo{
-      width:44px; height:44px; border-radius:8px; overflow:hidden;
-      background:linear-gradient(180deg,#ffffff08,#00000030);
-      display:flex; align-items:center; justify-content:center;
-      border:1px solid rgba(255,255,255,0.04); cursor:pointer;
+    .logos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .logo img{ width:100%; height:100%; object-fit:cover; display:block; }
 
-    input.inning{
-      width:44px; -webkit-appearance:none; appearance:none; background:transparent; color:var(--white);
-      border:1px solid transparent; border-radius:6px; padding:6px 4px; font-weight:700; text-align:center;
+    .logos .team-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 10px;
+      background: #fff;
+      object-fit: contain;
     }
-    input.inning:focus{ outline:none; background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.06); }
 
-    .totals{ font-weight:900; width:70px; }
-    input.small{ width:56px; -webkit-appearance:none; appearance:none; padding:6px; border-radius:6px; background:transparent; color:var(--white); border:1px solid transparent; }
-    input.small:focus{ background:rgba(255,255,255,0.02); border-color:rgba(255,255,255,0.06); }
+    .logos .tiktok-logo {
+      width: 60px;
+      height: 60px;
+      border-radius: 10px;
+      background: #fff;
+      object-fit: contain;
+    }
 
-    .highlight{ background: linear-gradient(90deg, rgba(196,18,48,0.12), rgba(196,18,48,0.06)); color:var(--white) !important; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      background: #fff;
+      color: #000;
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-    .note{ color:var(--muted); font-size:13px; margin-top:8px; text-align:center; }
+    th, td {
+      padding: 12px;
+      border: 1px solid #0033cc;
+    }
 
-    @media (max-width:820px){
-      .logo{ width:36px; height:36px; }
-      input.inning{ width:36px; font-size:13px; }
-      .totals{ width:50px; font-size:13px; }
+    th {
+      background: #ff0000;
+      color: #fff;
+    }
+
+    td input {
+      width: 50px;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    .bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
+    }
+
+    .bottom input {
+      width: 50px;
+      text-align: center;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Marcador de Béisbol (OBS) — Corregido</h1>
-      <div id="gameInfo" class="note">Fecha: <span id="dateNow"></span> · Entrada actual: <strong id="currentInningLabel">1</strong></div>
-    </header>
-
-    <div class="top-controls" role="toolbar" aria-label="Controles del marcador">
-      <button class="prev" id="prevBtn" title="Entrada anterior">⬅ Entrada anterior</button>
-      <button class="next" id="nextBtn" title="Entrada siguiente">Entrada siguiente ➡</button>
-      <button class="swap" id="swapBtn" title="Intercambiar equipos">🔁 Intercambiar equipos</button>
-      <button class="reset" id="resetBtn" title="Resetear marcador">🔄 Resetear</button>
+  <div class="scoreboard">
+    <!-- Logos -->
+    <div class="logos">
+      <div>
+        <img id="logoVisitor" class="team-logo" src="" alt="Visitante">
+        <input type="file" id="uploadVisitor" accept="image/*">
+      </div>
+      <div>
+        <img id="tiktokLogo" class="tiktok-logo" src="" alt="TikTok">
+        <input type="file" id="uploadTiktok" accept="image/*">
+      </div>
+      <div>
+        <img id="logoHome" class="team-logo" src="" alt="Local">
+        <input type="file" id="uploadHome" accept="image/*">
+      </div>
     </div>
 
-    <div class="table-wrap" aria-live="polite">
-      <table id="scoreboard" role="table" aria-label="Marcador de béisbol">
-        <thead>
-          <tr>
-            <th scope="col">Equipo</th>
-            <!-- Inning headers se generan dinámicamente para permitir entradas extra -->
-            <!-- inicialmente 1..9 -->
-            <th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th>
-            <th scope="col">5</th><th scope="col">6</th><th scope="col">7</th><th scope="col">8</th><th scope="col">9</th>
-            <th scope="col">R</th>
-            <th scope="col">H</th>
-            <th scope="col">E</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- VISITANTE -->
-          <tr data-team="away" aria-label="Visitante">
-            <td class="team-cell">
-              <label class="logo" title="Cambiar logo Visitante">
-                <img alt="Logo visitante" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%231b4a7a'/%3E%3Ctext x='50' y='55' font-size='22' fill='%23fff' font-family='Arial' text-anchor='middle'%3EAway%3C/text%3E%3C/svg%3E">
-              </label>
-              <div style="display:flex;flex-direction:column;align-items:flex-start;">
-                <div style="font-weight:800;" class="team-name">Visitante</div>
-                <input type="file" accept="image/*" class="logo-file" data-team="away" style="display:none">
-              </div>
-            </td>
+    <!-- Tabla -->
+    <table>
+      <thead>
+        <tr>
+          <th>Equipo</th>
+          <th>R</th>
+          <th>H</th>
+          <th>E</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Visitante</td>
+          <td><input type="number" id="rVisitor" min="0" value="0"></td>
+          <td><input type="number" id="hVisitor" min="0" value="0"></td>
+          <td><input type="number" id="eVisitor" min="0" value="0"></td>
+        </tr>
+        <tr>
+          <td>Local</td>
+          <td><input type="number" id="rHome" min="0" value="0"></td>
+          <td><input type="number" id="hHome" min="0" value="0"></td>
+          <td><input type="number" id="eHome" min="0" value="0"></td>
+        </tr>
+      </tbody>
+    </table>
 
-            <!-- 9 entradas iniciales -->
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="1" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="2" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="3" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="4" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="5" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="6" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="7" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="8" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="away" data-inning="9" inputmode="numeric"></td>
-
-            <td class="totals"><span class="total-r" data-team="away">0</span></td>
-            <td><input class="small hits" data-team="away" type="number" min="0" value="0" inputmode="numeric"></td>
-            <td><input class="small errors" data-team="away" type="number" min="0" value="0" inputmode="numeric"></td>
-          </tr>
-
-          <!-- LOCAL -->
-          <tr data-team="home" aria-label="Local">
-            <td class="team-cell">
-              <label class="logo" title="Cambiar logo Local">
-                <img alt="Logo local" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230b2240'/%3E%3Ctext x='50' y='55' font-size='22' fill='%23fff' font-family='Arial' text-anchor='middle'%3ELocal%3C/text%3E%3C/svg%3E">
-              </label>
-              <div style="display:flex;flex-direction:column;align-items:flex-start;">
-                <div style="font-weight:800;" class="team-name">Local</div>
-                <input type="file" accept="image/*" class="logo-file" data-team="home" style="display:none">
-              </div>
-            </td>
-
-            <!-- 9 entradas iniciales -->
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="1" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="2" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="3" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="4" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="5" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="6" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="7" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="8" inputmode="numeric"></td>
-            <td><input class="inning" type="number" min="0" value="0" data-team="home" data-inning="9" inputmode="numeric"></td>
-
-            <td class="totals"><span class="total-r" data-team="home">0</span></td>
-            <td><input class="small hits" data-team="home" type="number" min="0" value="0" inputmode="numeric"></td>
-            <td><input class="small errors" data-team="home" type="number" min="0" value="0" inputmode="numeric"></td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Parte inferior -->
+    <div class="bottom">
+      <div>Inning: <input type="number" id="inning" min="1" max="12" value="1"></div>
+      <div>Outs: <input type="number" id="outs" min="0" max="3" value="0"></div>
     </div>
-
-    <div class="note">Haz clic en el logo para cambiar la imagen. Los totales R se calculan automáticamente.</div>
   </div>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js"></script>
+
   <script>
-    (function(){
-      const STORAGE_KEY = 'mlb_scoreboard_v2';
-      const scoreboard = document.getElementById('scoreboard');
-      const nextBtn = document.getElementById('nextBtn');
-      const prevBtn = document.getElementById('prevBtn');
-      const resetBtn = document.getElementById('resetBtn');
-      const swapBtn = document.getElementById('swapBtn');
-      const currentInningLabel = document.getElementById('currentInningLabel');
-      const dateNow = document.getElementById('dateNow');
+    // Configuración Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAhzxDhO1ix8DyutaJDbtkz1P_mUyIB5Vc",
+      authDomain: "picks026-e81f6.firebaseapp.com",
+      databaseURL: "https://picks026-e81f6-default-rtdb.firebaseio.com",
+      projectId: "picks026-e81f6",
+      storageBucket: "picks026-e81f6.appspot.com",
+      messagingSenderId: "97384480235",
+      appId: "1:97384480235:web:e404ab706a40b9084d2dae",
+      measurementId: "G-D2LNRY5WSC"
+    };
 
-      dateNow.textContent = new Date().toLocaleDateString();
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const storage = firebase.storage();
 
-      let currentInning = 1;
-      let numberOfInnings = 9; // puede crecer si hay entradas extra
+    // Referencias
+    const refs = {
+      rVisitor: document.getElementById("rVisitor"),
+      hVisitor: document.getElementById("hVisitor"),
+      eVisitor: document.getElementById("eVisitor"),
+      rHome: document.getElementById("rHome"),
+      hHome: document.getElementById("hHome"),
+      eHome: document.getElementById("eHome"),
+      inning: document.getElementById("inning"),
+      outs: document.getElementById("outs"),
+      logoVisitor: document.getElementById("logoVisitor"),
+      logoHome: document.getElementById("logoHome"),
+      tiktokLogo: document.getElementById("tiktokLogo"),
+    };
 
-      // util: convertir NodeList to Array
-      const toArr = n => Array.prototype.slice.call(n);
-
-      // actualizar totales para una fila (row = <tr>)
-      function updateTotalsForRow(row){
-        const inningInputs = row.querySelectorAll('input.inning');
-        let sum = 0;
-        inningInputs.forEach(inp => {
-          const v = parseInt(inp.value, 10);
-          if(Number.isFinite(v) && v >= 0) sum += v;
-        });
-        const team = row.dataset.team;
-        const totalR = row.querySelector('.total-r');
-        if(totalR) totalR.textContent = sum;
-      }
-
-      function updateAllTotals(){
-        document.querySelectorAll('tbody tr').forEach(updateTotalsForRow);
-        saveData();
-      }
-
-      // highlight entrada actual
-      function highlightInning(){
-        // limpiar
-        document.querySelectorAll('thead th, tbody td').forEach(el => el.classList.remove('highlight'));
-        // header: th index = currentInning + 1 (porque primera columna es "Equipo")
-        const headerCell = scoreboard.querySelector(`thead th:nth-child(${currentInning + 1})`);
-        if(headerCell) headerCell.classList.add('highlight');
-        // celdas por fila
-        document.querySelectorAll('tbody tr').forEach(row => {
-          const cell = row.querySelector(`td:nth-child(${currentInning + 1})`);
-          if(cell) cell.classList.add('highlight');
-        });
-        currentInningLabel.textContent = currentInning;
-      }
-
-      // añadir una entrada extra (añade una columna antes de R,H,E)
-      function addExtraInning(){
-        numberOfInnings++;
-        // header: insertar antes de las últimas 3 columnas (R,H,E)
-        const theadRow = scoreboard.querySelector('thead tr');
-        const ths = theadRow.querySelectorAll('th');
-        const insertBefore = ths[ths.length - 3]; // primera de R,H,E
-        const newTh = document.createElement('th');
-        newTh.scope = 'col';
-        newTh.textContent = numberOfInnings;
-        theadRow.insertBefore(newTh, insertBefore);
-
-        // Para cada fila añadir un td con input antes de totales (antes de las 3 últimas td)
-        const rows = scoreboard.querySelectorAll('tbody tr');
-        rows.forEach(row => {
-          const tds = row.querySelectorAll('td');
-          const beforeTd = tds[tds.length - 3]; // posición donde insertar
-          const newTd = document.createElement('td');
-          const input = document.createElement('input');
-          input.type = 'number'; input.min = '0'; input.value = '0';
-          input.className = 'inning';
-          input.setAttribute('data-inning', numberOfInnings);
-          input.setAttribute('data-team', row.dataset.team);
-          input.inputMode = 'numeric';
-          input.addEventListener('input', onInningInput);
-          newTd.appendChild(input);
-          row.insertBefore(newTd, beforeTd);
-        });
-
-        saveData();
-        updateAllTotals();
-        highlightInning();
-      }
-
-      // handler para inputs de entrada
-      function onInningInput(e){
-        const input = e.target;
-        // allow only digits
-        input.value = input.value.replace(/[^\d]/g, '') || '0';
-        const row = input.closest('tr');
-        if(row) updateTotalsForRow(row);
-        saveData();
-      }
-
-      // attach events to existing inputs
-      function attachInputs(){
-        document.querySelectorAll('input.inning').forEach(inp => {
-          inp.removeEventListener('input', onInningInput);
-          inp.addEventListener('input', onInningInput);
-        });
-        document.querySelectorAll('input.small').forEach(inp => {
-          inp.addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^\d]/g,'') || '0';
-            saveData();
-          });
+    // Guardar stats en DB en tiempo real
+    Object.keys(refs).forEach(key => {
+      if (refs[key].tagName === "INPUT" && refs[key].type === "number") {
+        refs[key].addEventListener("input", () => {
+          db.ref("scoreboard/" + key).set(refs[key].value);
         });
       }
+    });
 
-      // next/prev
-      function nextInning(){
-        if(currentInning >= numberOfInnings){
-          // si estamos en la última entrada, añadimos una extra automáticamente (útil para extra innings)
-          addExtraInning();
+    // Escuchar cambios de DB
+    db.ref("scoreboard").on("value", snapshot => {
+      const data = snapshot.val();
+      if (!data) return;
+      Object.keys(data).forEach(key => {
+        if (refs[key] && refs[key].type === "number") {
+          refs[key].value = data[key];
         }
-        currentInning++;
-        if(currentInning > numberOfInnings) currentInning = numberOfInnings;
-        highlightInning();
-        saveData();
-      }
-      function prevInning(){
-        if(currentInning > 1) currentInning--;
-        highlightInning();
-        saveData();
-      }
+      });
+    });
 
-      // reset
-      function resetBoard(confirmReset = true){
-        if(confirmReset && !confirm('¿Resetear el marcador?')) return;
-        // dejar 9 entradas por defecto
-        // eliminar columnas extra si existen
-        while(numberOfInnings > 9){
-          // eliminar la última columna de inning
-          // eliminar header th antes de R,H,E
-          const theadRow = scoreboard.querySelector('thead tr');
-          const ths = theadRow.querySelectorAll('th');
-          const removeIndex = ths.length - 4; // ultima entrada está antes de R,H,E -> -4 (0-based)
-          if(ths[removeIndex]) theadRow.removeChild(ths[removeIndex]);
-          // eliminar td correspondiente en cada fila
-          scoreboard.querySelectorAll('tbody tr').forEach(row=>{
-            const tds = row.querySelectorAll('td');
-            const removeTd = tds[tds.length - 4];
-            if(removeTd) row.removeChild(removeTd);
-          });
-          numberOfInnings--;
-        }
-
-        // set all inputs to 0
-        scoreboard.querySelectorAll('input.inning').forEach(i => i.value = '0');
-        scoreboard.querySelectorAll('input.small').forEach(i => i.value = '0');
-        scoreboard.querySelectorAll('.total-r').forEach(s => s.textContent = '0');
-
-        currentInning = 1;
-        updateAllTotals();
-        highlightInning();
-        saveData();
-      }
-
-      // swap teams
-      function swapTeams(){
-        const rows = scoreboard.querySelectorAll('tbody tr');
-        if(rows.length < 2) return;
-        const rowA = rows[0], rowB = rows[1];
-
-        // swap names
-        const nameA = rowA.querySelector('.team-name').textContent;
-        const nameB = rowB.querySelector('.team-name').textContent;
-        rowA.querySelector('.team-name').textContent = nameB;
-        rowB.querySelector('.team-name').textContent = nameA;
-
-        // swap logos
-        const imgA = rowA.querySelector('.logo img');
-        const imgB = rowB.querySelector('.logo img');
-        const tmpSrc = imgA.src;
-        imgA.src = imgB.src;
-        imgB.src = tmpSrc;
-
-        // swap inning values + hits/errors
-        const inputsA = rowA.querySelectorAll('input');
-        const inputsB = rowB.querySelectorAll('input');
-        const valsA = toArr(inputsA).map(i => i.value);
-        const valsB = toArr(inputsB).map(i => i.value);
-        toArr(inputsA).forEach((inp, idx) => inp.value = valsB[idx] !== undefined ? valsB[idx] : inp.value);
-        toArr(inputsB).forEach((inp, idx) => inp.value = valsA[idx] !== undefined ? valsA[idx] : inp.value);
-
-        updateAllTotals();
-        saveData();
-      }
-
-      // save state
-      function saveData(){
-        const data = {
-          currentInning,
-          numberOfInnings,
-          rows: []
-        };
-        document.querySelectorAll('tbody tr').forEach(row => {
-          const team = row.dataset.team;
-          const name = row.querySelector('.team-name').textContent;
-          const logo = row.querySelector('.logo img').src;
-          const inningInputs = toArr(row.querySelectorAll('input.inning')).map(i => i.value);
-          const hits = row.querySelector('.hits').value || '0';
-          const errors = row.querySelector('.errors').value || '0';
-          data.rows.push({ team, name, logo, innings: inningInputs, hits, errors });
+    // Subir imágenes a Firebase Storage
+    function uploadLogo(fileInput, path, imgElement) {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const storageRef = storage.ref("logos/" + path);
+      storageRef.put(file).then(() => {
+        storageRef.getDownloadURL().then(url => {
+          db.ref("logos/" + path).set(url);
         });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      }
+      });
+    }
 
-      // load state
-      function loadData(){
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return;
-        try{
-          const data = JSON.parse(raw);
-          if(data.numberOfInnings && data.numberOfInnings > 9){
-            // reconstruir columnas extras
-            while(numberOfInnings < data.numberOfInnings) addExtraInning();
-          }
+    document.getElementById("uploadVisitor").addEventListener("change", (e) => uploadLogo(e.target, "visitor", refs.logoVisitor));
+    document.getElementById("uploadHome").addEventListener("change", (e) => uploadLogo(e.target, "home", refs.logoHome));
+    document.getElementById("uploadTiktok").addEventListener("change", (e) => uploadLogo(e.target, "tiktok", refs.tiktokLogo));
 
-          currentInning = data.currentInning || 1;
-          // llenar filas
-          data.rows.forEach(r => {
-            const row = document.querySelector(`tbody tr[data-team="${r.team}"]`);
-            if(!row) return;
-            if(r.name) row.querySelector('.team-name').textContent = r.name;
-            if(r.logo) {
-              const img = row.querySelector('.logo img');
-              if(img) img.src = r.logo;
-            }
-            // entradas
-            const inningInputs = row.querySelectorAll('input.inning');
-            toArr(inningInputs).forEach((inp, idx) => {
-              if(r.innings && r.innings[idx] !== undefined) inp.value = r.innings[idx];
-            });
-            // hits/errors
-            if(row.querySelector('.hits') && typeof r.hits !== 'undefined') row.querySelector('.hits').value = r.hits;
-            if(row.querySelector('.errors') && typeof r.errors !== 'undefined') row.querySelector('.errors').value = r.errors;
-          });
-          updateAllTotals();
-          highlightInning();
-        } catch(e){
-          console.error('Error cargando marcador:', e);
-        }
-      }
-
-      // logo upload handling
-      function attachLogoUpload(){
-        document.querySelectorAll('.logo').forEach(label => {
-          label.addEventListener('click', (ev) => {
-            const row = label.closest('tr');
-            const team = row.dataset.team;
-            const fileInput = row.querySelector('.logo-file');
-            if(fileInput) fileInput.click();
-          });
-        });
-        document.querySelectorAll('.logo-file').forEach(fi => {
-          fi.addEventListener('change', (e) => {
-            const file = e.target.files && e.target.files[0];
-            if(!file) return;
-            if(!file.type.startsWith('image/')) { alert('Selecciona una imagen válida'); return; }
-            const reader = new FileReader();
-            reader.onload = function(ev){
-              const row = e.target.closest('tr');
-              const img = row.querySelector('.logo img');
-              if(img) img.src = ev.target.result;
-              saveData();
-            };
-            reader.readAsDataURL(file);
-          });
-        });
-      }
-
-      // init
-      function init(){
-        attachInputs();
-        attachLogoUpload();
-        // attach control events
-        nextBtn.addEventListener('click', nextInning);
-        prevBtn.addEventListener('click', prevInning);
-        resetBtn.addEventListener('click', () => resetBoard(true));
-        swapBtn.addEventListener('click', swapTeams);
-
-        // attach input change to totals
-        document.querySelectorAll('input.inning').forEach(i => i.addEventListener('blur', updateAllTotals));
-        document.querySelectorAll('input.inning').forEach(i => i.addEventListener('input', updateAllTotals));
-        document.querySelectorAll('input.small').forEach(i => i.addEventListener('input', saveData));
-
-        // keyboard shortcuts útiles (cuando no estés en un input):
-        document.addEventListener('keydown', (e) => {
-          const active = document.activeElement;
-          if(active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
-          if(e.key === 'ArrowRight') nextInning();
-          if(e.key === 'ArrowLeft') prevInning();
-          if(e.key === 'r' || e.key === 'R') resetBoard(false);
-        });
-
-        loadData(); // cargar guardado si existe
-        highlightInning();
-      }
-
-      // arranque
-      init();
-    })();
+    // Escuchar cambios en logos desde DB
+    db.ref("logos").on("value", snapshot => {
+      const logos = snapshot.val();
+      if (!logos) return;
+      if (logos.visitor) refs.logoVisitor.src = logos.visitor;
+      if (logos.home) refs.logoHome.src = logos.home;
+      if (logos.tiktok) refs.tiktokLogo.src = logos.tiktok;
+    });
   </script>
 </body>
 </html>
